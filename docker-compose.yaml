@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:latest
+    volumes:
+      - /var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=git_db
+    cap_add:
+      - SYS_NICE
+    ports:
+      - 3776:3306

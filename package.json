@@ -1,0 +1,20 @@
+{
+  "name": "git_repo",
+  "version": "1.0.0",
+  "description": "Projeto para buscar informaçoes dos usuarios no gitHub",
+  "main": "index.js",
+  "author": "garciajunior <jhunior.get@hotmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon src/server.js "
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^5.19.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7",
+    "sequelize-cli": "^5.5.1"
+  }
+}
