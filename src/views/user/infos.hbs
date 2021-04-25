@@ -1,0 +1,33 @@
+
+{{#each items as |item| }}
+<section>
+ <div class="container" >
+   <div class="row text-center">
+     <div class="card-group">
+      <div class="col-12 col-md-6 col-lg-3" >
+          {{!-- <div class=" card">  --}}
+            <div class="bg-white rounded shadow-sm py-5 px-4" style="width: 18rem;">
+              <div>
+                <img src="{{item.avatar_url}}" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm" alt="...">
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">{{item.login}}</h5>
+              </div>
+              <ul class="social mb-0 list-inline mt-3">
+                <li class="list-inline-item">ID: {{item.id}}</li>
+                <li class="list-inline-item">Url Pessoal: {{item.html_url}}</li>
+                <li class="list-inline-item">Score: {{item.score}}</li>
+              </ul> 
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </section>
+
+
+{{else}}
+
+{{/each}}
+
