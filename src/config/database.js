@@ -1,3 +1,5 @@
+//Configuração do banco de dados 
+
 module.exports = {
   username: "root",
   password: "root",

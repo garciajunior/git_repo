@@ -1,14 +1,8 @@
-body {
-  background: #e8cbc0;
-  background: -webkit-linear-gradient(to right, #e8cbc0, #636fa4);
-  background: linear-gradient(to right, #e8cbc0, #636fa4);
+.infos{
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background-image: url(bg01.jpg);
-  background-repeat: no-repeat;
-  background-size: cover; */
 }
 
 * {
@@ -34,4 +28,3 @@ section {
   overflow: hidden;
   width: 20rem;
 }
-

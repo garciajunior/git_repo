@@ -2,9 +2,9 @@ const User = require("../models/User");
 const axios = require("axios");
 const { enccript, comparePassword } = require("../helpers/util");
 const passport = require("passport");
-const { isAuthenticated } = require("../helpers/isLoged");
 
 module.exports = {
+  //salva  o dados do usuário no MySql
   async store(req, res) {
     let errors = [];
     if (
@@ -14,6 +14,7 @@ module.exports = {
     ) {
       errors.push({ msg: "Email invalid!" });
     }
+    //Validação da senha
     if (
       !req.body.password ||
       typeof req.body.password == undefined ||
@@ -24,22 +25,29 @@ module.exports = {
     if (req.body.password !== req.body.passwordConfirmed) {
       errors.push({ msg: "As senhas devem ser iguais!" });
     }
+    if (req.body.password.length < 6) {
+      errors.push({
+        msg: "As senhas deve conter mais mais de seis caracteres!",
+      });
+    }
 
     if (errors.length > 0) {
       res.render("/login", { errors: errors });
     } else {
       let { username, password } = req.body;
+      //Ao salvar o usuario salva o primeiro registro do timestamp
       let last_login = new Date(null);
+
+      // pega a senha e transforma  em hash para nao ser salva direto no banco
       password = enccript(password);
-      console.log(username, password);
-      console.log(`----${password}-----`);
+
+      //Se NAO encontrar o usuário no MySql, entao cria se um novo usuário.
       User.findOrCreate({
         where: { username: username },
         defaults: { password, last_login },
       }).spread(function (user, created) {
         if (created) {
           req.flash("success_msg", "Usuário cadastrado com sucesso!");
-
           res.redirect("/login");
         } else {
           req.flash("error_msg", `Usuário existente no nosso servidor`);
@@ -48,47 +56,64 @@ module.exports = {
       });
     }
   },
-  async index(req, res) {
-    const users = await User.findAll();
-    return res.json(users);
-  },
+
   async info(req, res) {
-    const username = req.body.username;
-    axios({
-      method: "GET",
-      url: ` https://api.github.com/search/users?q=${username}`,
-    })
-      .then((response) => {
-        res.render("user/infos", { items: response.data.items });
+    const username = req.session.passport.user.username;
+    //Atualizando o ultimo Login do usuário
+    await User.update(
+      { last_login: new Date() },
+      {
+        where: {
+          username: username,
+        },
+      }
+    )
+      .then(() => {
+        axios({
+          method: "GET",
+          url: `https://api.github.com/search/users?q=${username}`,
+        })
+          .then((response) => {
+            req.flash("success_msg", "Acesso com sucesso ao GitHu!");
+
+            res.render("user/infos", {
+              items: response.data.items,
+              style: "custom/infos.css",
+            });
+          })
+          .catch((error) => {
+            req.flash(
+              "error_msg",
+              `Erro ao conectar ao GitHub com status ${error.response.status}`
+            );
+          });
       })
-      .catch((err) => {
-        console.error("Alguma coisa deu errado", err);
+      .catch((error) => {
+        req.flash("error_msg", `Erro interno ao encontrar usuário!`);
       });
   },
-
+  //View de logar no sistema
   async sinup(req, res) {
     res.render("user/login");
   },
+  //View para criar usuário
   async register(req, res) {
     res.render("user/register");
   },
-  async linfo(req, res) {
-    res.render("user/infos");
-  },
+
+  //Metodo de auticação do passport
   async login(req, res, next) {
-    passport.authenticate("local", function (err, user, info) {
-      if (err) {
-        return next(err);
-      }
-      if (!user) {
-        return res.redirect("/login");
-      }
-      req.logIn(user, function (err) {
-        if (err) {
-          return next(err);
-        }
-        return res.redirect("/infos");
-      });
+    await passport.authenticate("local", {
+      successRedirect: "/infos",
+      failureRedirect: "/login",
+      failureFlash: true,
     })(req, res, next);
+  },
+
+  //Metodo para sair do sistema!
+  async logout(req, res) {
+    req.logout();
+    req.flash("success_msg", "Logout realizado com sucesso!");
+    res.redirect("/");
   },
 };

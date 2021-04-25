@@ -4,24 +4,32 @@
 {{else}}
 {{/each}}
 
-<div class="card">
-  <div class="card-body">
-  <h3>Crie sua conta hoje!</h3>
-  <form action="/store" method="POST">
-    <div class="form-floating mb-3">
-      <input type="email" class="form-control" id="exampleInputEmail1" placeholder="test@example.com" aria-describedby="emailHelp" name="username" required>
-      <label for="email">Email address</label>
+<div class="container ">
+   <div class="row align-items-center">
+    <div class="col-4"></div>
+      <div class="col-4 justify-content-center">
+        <h3>Registre-se</h3>
+            <form action="/store" method="POST">
 
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="test@example.com" aria-describedby="emailHelp" name="username" required>
+                <label for="email">Email address</label>
+              </div>
+
+              <div class="form-floating mt-4">
+                <input type="password" class="form-control" id="password" name="password" required placeholder="password">
+                <label for="password">Insira sua senha</label>
+              </div>
+
+              <div class="form-floating mt-4">
+                <input type="password" class="form-control" id="passwordConfirmed"  name="passwordConfirmed" required placeholder="password">
+                <label for="passwordConfirmed">Repita sua senha</label>
+              </div>
+
+              <button type="submit" class="btn btn-primary mt-4">Criar conta</button>
+            </form>
+        </div>
+      </div>
     </div>
-    <div class="form-floating mt-4">
-      <input type="password" class="form-control" id="password" name="password" required placeholder="password">
-      <label for="password">Insira sua senha</label>
-    </div>
-    <div class="form-floating mt-4">
-      <input type="password" class="form-control" id="passwordConfirmed"  name="passwordConfirmed" required placeholder="password">
-      <label for="passwordConfirmed">Repita sua senha</label>
-    </div>
-    <button type="submit" class="btn btn-primary mt-4">Sign in</button>
-  </form>
-    </div>
+  </div>
 </div>

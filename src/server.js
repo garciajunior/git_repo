@@ -18,12 +18,14 @@ const app = express();
 app.use(
   session({
     secret: "junior",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 30 * 60 * 1000 },
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(flash());
 
 const routes = require("./router/routers");
