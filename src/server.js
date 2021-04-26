@@ -6,15 +6,18 @@ const Handlebars = require("handlebars");
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
-require("./auth/auth")(passport);
+require("./auth/auth")(passport); //configurando o passport
+//Handlebars config
 const {
   allowInsecurePrototypeAccess,
 } = require("@handlebars/allow-prototype-access");
 
+// Carregando o MySql
 require("../src/database");
 //Instancia do express
 const app = express();
 
+//Criando a sessão
 app.use(
   session({
     secret: "junior",
@@ -27,10 +30,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(flash());
-
+//inicializando as rotas
 const routes = require("./router/routers");
 // Midlewares
 
+//Variaveis globais
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash("success_msg");
   res.locals.error_msg = req.flash("error_msg");
@@ -48,7 +52,7 @@ const hbs = exphbs.create({
   extname: ".hbs",
   handlebars: allowInsecurePrototypeAccess(Handlebars),
 });
-// Public
+// Public, importando arquivos estaticos
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
@@ -66,5 +70,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("Server esta no ar");
+  console.log("Server is runnig on port 3000");
 });
