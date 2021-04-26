@@ -58,38 +58,24 @@ module.exports = {
   },
 
   async info(req, res) {
-    const username = req.session.passport.user.username;
-    //Atualizando o ultimo Login do usuário
-    await User.update(
-      { last_login: new Date() },
-      {
-        where: {
-          username: username,
-        },
-      }
-    )
-      .then(() => {
-        axios({
-          method: "GET",
-          url: `https://api.github.com/search/users?q=${username}`,
-        })
-          .then((response) => {
-            req.flash("success_msg", "Acesso com sucesso ao GitHu!");
+    const username = req.body.username;
+    axios({
+      method: "GET",
+      url: `https://api.github.com/search/users?q=${username}`,
+    })
+      .then((response) => {
+        req.flash("success_msg", "Acesso com sucesso ao GitHu!");
 
-            res.render("user/infos", {
-              items: response.data.items,
-              style: "custom/infos.css",
-            });
-          })
-          .catch((error) => {
-            req.flash(
-              "error_msg",
-              `Erro ao conectar ao GitHub com status ${error.response.status}`
-            );
-          });
+        res.render("user/infos", {
+          items: response.data.items,
+          style: "custom/infos.css",
+        });
       })
       .catch((error) => {
-        req.flash("error_msg", `Erro interno ao encontrar usuário!`);
+        req.flash(
+          "error_msg",
+          `Erro ao conectar ao GitHub com status ${error.response.status}`
+        );
       });
   },
   //View de logar no sistema
@@ -100,14 +86,25 @@ module.exports = {
   async register(req, res) {
     res.render("user/register");
   },
-
-  //Metodo de auticação do passport
-  async login(req, res, next) {
-    await passport.authenticate("local", {
-      successRedirect: "/infos",
-      failureRedirect: "/login",
-      failureFlash: true,
-    })(req, res, next);
+  //
+  async result(req, res) {
+    const username = req.user.username;
+    //Atualizando o ultimo Login do usuário
+    await User.update(
+      { last_login: new Date() },
+      {
+        where: {
+          username: username,
+        },
+      }
+    )
+      .then(() => {
+        console.log("User atualizado!");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    res.render("user/result");
   },
 
   //Metodo para sair do sistema!
@@ -115,5 +112,13 @@ module.exports = {
     req.logout();
     req.flash("success_msg", "Logout realizado com sucesso!");
     res.redirect("/");
+  },
+  //Metodo de auticação do passport
+  async login(req, res, next) {
+    await passport.authenticate("local", {
+      successRedirect: "/result",
+      failureRedirect: "/login",
+      failureFlash: true,
+    })(req, res, next);
   },
 };
